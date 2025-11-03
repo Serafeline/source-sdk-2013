@@ -200,7 +200,7 @@ bool CSmokeStack::KeyValue( const char *szKeyName, const char *szValue )
 		}
 		
 		const char *pName = STRING( m_strMaterialModel );
-		PrecacheModel( str );
+		PrecacheModel( pName );
 
 		return true;
 	}
