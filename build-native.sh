@@ -9,7 +9,6 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "$0")" && pwd)"
-src_dir="$script_dir/src"
 
 # Determine build configuration.
 build_mode="release"
@@ -69,7 +68,7 @@ exec podman run \
     --env "CCACHE_DIR=$ccache_dir" \
     --userns=keep-id \
     --rm \
-    --mount type=bind,"source=$ccache_dir","target=$ccache_dir" \
+    --mount type=bind,"source=$ccache_dir,target=$ccache_dir" \
     --mount type=bind,"source=$script_dir",target=/my_mod/ \
     "$image" \
     bash -c "$build_commands"
