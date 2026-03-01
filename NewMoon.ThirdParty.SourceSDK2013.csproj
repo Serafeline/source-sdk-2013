@@ -12,4 +12,30 @@
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
   </PropertyGroup>
+
+  <!-- Native SDK Build Integration -->
+  <PropertyGroup>
+    <!-- Set to true to build the native TF2 server binary (requires Podman + Linux/WSL). -->
+    <BuildNativeSDK Condition="'$(BuildNativeSDK)' == ''">false</BuildNativeSDK>
+    <NativeBuildConfiguration Condition="'$(NativeBuildConfiguration)' == ''">release</NativeBuildConfiguration>
+    <NativeOutputPath>$(MSBuildProjectDirectory)/game/mod_tf/bin/linux64</NativeOutputPath>
+    <!-- Max parallel compiler jobs. Defaults to nproc. Lower this if OOM occurs (e.g., in WSL). -->
+    <NativeBuildJobs Condition="'$(NativeBuildJobs)' == ''"/>
+  </PropertyGroup>
+
+  <Target Name="BuildNativeServer"
+          BeforeTargets="Build"
+          Condition="'$(BuildNativeSDK)' == 'true'">
+    <Exec Command="bash &quot;$(MSBuildProjectDirectory)/build-native.sh&quot; $(NativeBuildConfiguration) $(NativeBuildJobs)"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
+  <Target Name="CopyNativeOutput"
+          AfterTargets="BuildNativeServer"
+          Condition="'$(BuildNativeSDK)' == 'true' AND Exists('$(NativeOutputPath)/server.so')">
+    <Copy SourceFiles="$(NativeOutputPath)/server.so"
+          DestinationFolder="$(OutputPath)"
+          SkipUnchangedFiles="true" />
+    <Message Text="Copied server.so to $(OutputPath)" Importance="high" />
+  </Target>
 </Project>

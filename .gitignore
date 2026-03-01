@@ -1,5 +1,14 @@
 # Files to ignore when considering what GIT should commit.
 
+*.a
+*.so
+*.so.dbg
+*.dylib
+*.dylib.dSYM/
+mod_*_linux64
+.ninja_*
+
+
 # Visual Studio 
 *.suo
 *.user
